@@ -1,5 +1,6 @@
 package com.java.project.Game;
 
+import com.java.project.Game.domain.Calcul;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,11 +30,16 @@ public class CalculMentalApplication implements CommandLineRunner{
 		// TODO Auto-generated method stub
 		Utilisateur utilisateur = new Utilisateur("Foglol");
 		daoUtilisateur.save(utilisateur);
-		
+
 		Partie partie = new Partie(2000, utilisateur);
 		daoPartie.save(partie);
-		
-		
+
+		Calcul calcul = new Calcul();
+		calcul.generateCalcul(5);
+		System.out.println(calcul.getCalcul());
+
+
+
 	}
 
 }
