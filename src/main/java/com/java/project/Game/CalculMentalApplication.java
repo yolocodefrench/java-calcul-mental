@@ -10,6 +10,7 @@ import com.java.project.Game.dal.IPartieRepository;
 import com.java.project.Game.dal.IUtilisateurRepository;
 import com.java.project.Game.domain.Partie;
 import com.java.project.Game.domain.Utilisateur;
+import com.java.project.Game.job.Menu;
 
 @SpringBootApplication
 public class CalculMentalApplication implements CommandLineRunner{
@@ -37,9 +38,11 @@ public class CalculMentalApplication implements CommandLineRunner{
 		Calcul calcul = new Calcul();
 		calcul.generateCalcul(5);
 		System.out.println(calcul.getCalcul());
-
-
-
+		
+		Menu menu = Menu.getInstance();
+		
+		menu.printGame();
+		
 	}
 
 }
