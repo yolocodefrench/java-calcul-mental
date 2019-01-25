@@ -2,10 +2,18 @@ package com.java.project.Game.job;
 
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.java.project.Game.dal.IUtilisateurRepository;
+import com.java.project.Game.domain.Utilisateur;
+
 public class Menu {
     /** Constructeur privé */
     private Menu()
     {}
+    
+    @Autowired
+    private IUtilisateurRepository daoUtilisateur;
      
     /** Instance unique non préinitialisée */
     private static Menu INSTANCE = null;
@@ -32,16 +40,29 @@ public class Menu {
     
     private String getUser() {
     	Strings.printConnection();
-    	System.out.println("Rentrez votre pseudo");
     	
-    	String username = this.getStringFromScanner();
-		return username;
+    	String pseudo = this.getStringFromScanner("Rentrez votre pseudo");    	
+    	this.daoUtilisateur.findByPseudo(pseudo);
+    	
+    	
+    	
+		return "";
     }
     
-    private String getStringFromScanner() {
+    private String getStringFromScanner(String sentence) {
+    	if(!sentence.equals("")) {
+    		System.out.println(sentence);
+    	}
     	Scanner sc = new Scanner(System.in);
     	String str = sc.nextLine();
     	sc.close();
     	return str;
+    }
+    
+    private int getIntFromScanner() {
+    	Scanner sc = new Scanner(System.in);
+    	int num = sc.nextInt();
+    	sc.close();
+    	return num;
     }
 }
