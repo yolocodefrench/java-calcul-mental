@@ -1,11 +1,17 @@
 package com.java.project.Game.domain;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Calcul implements ICalcul{
+public class Calcul implements InterfaceCalcul{
 
 	String[] calcul;
 	
+	public Calcul() {
+		super();
+	}
+
 	private int getRandomNumber() {
 		return (int)(Math.random() * 10 + 1);
 	}
@@ -15,7 +21,7 @@ public class Calcul implements ICalcul{
 	}
 	
 	private String getOperator() {
-		String[] operators = {"+", "-", "/", "*", "%"};
+		String[] operators = {"+", "-", "/", "x"};
 		return operators[(int)(Math.random() * operators.length)];
 	}
 
@@ -36,13 +42,86 @@ public class Calcul implements ICalcul{
 	}
 
 	public String getCalcul(){
-		return Arrays.toString(this.calcul);
+		StringBuilder sb = new StringBuilder();
+		for(String s:this.calcul) {
+			sb.append(s);
+		}
+		return sb.toString();
 	}
 	
-	public int calculate() {
-		//TODO calculate the operations
+	public boolean isEqual(String response) {
+		return response.equals(this.calculate());
+	}
+	
+	private String calculate() {
+		List<Integer> indexes = this.getOperandStrongIndexes();
 		
-		return 0;
+		float finalResult = 0;
+		
+		for(Integer i: indexes) {
+			float first = Float.parseFloat(this.calcul[i-1]);
+			float second = Float.parseFloat(this.calcul[i+1]);
+			//calculate numbers around this index
+			float res = this.calcFromOperand(first, this.calcul[i], second);
+			
+			this.calcul[i-1] = null;
+			this.calcul[i] = null;
+			this.calcul[i+1] = 	Float.toString(res);
+		}
+		
+		List<String> restOfCalcul = new ArrayList<>();
+		for(String s: this.calcul) {
+			if(s != null) {
+				restOfCalcul.add(s);
+			}
+		}
+		
+		for(int i=0; i<restOfCalcul.size(); i++){
+			
+			if(i==0) {
+				finalResult+= Float.parseFloat(restOfCalcul.get(i));
+			}else if(restOfCalcul.get(i-1).equals("+")) {
+				finalResult+= Float.parseFloat(restOfCalcul.get(i));
+			}else if(restOfCalcul.get(i-1).equals("-")) {
+				finalResult-= Float.parseFloat(restOfCalcul.get(i));
+			}
+		}
+		
+		System.out.println(Float.toString(finalResult));
+		
+		return Float.toString(finalResult);
+    }
+	
+	private float calcFromOperand(float first, String operand, float second) {
+		float res = 0;
+		switch(operand) {
+			case "x":
+				res = first * second;
+				break;
+			case "/":
+				res = first / second;
+				break;
+			case "+":
+				res = first + second;
+				break;
+			case "-":
+				res = first - second;
+		}
+		
+		return res;
+	}
+	
+	private List<Integer> getOperandStrongIndexes(){
+		List<Integer> indexes = new ArrayList<>();
+		int i=0;
+		for(String s: this.calcul) {
+			if(s.equals("x") || s.equals("/")) {
+				indexes.add(i);
+			}
+			i++;
+		}
+		
+		return indexes;
 	}
 
 	@Override
