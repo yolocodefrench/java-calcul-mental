@@ -30,19 +30,19 @@ public class CalculMentalApplication implements CommandLineRunner{
 	IPartieRepository daoPartie;
 	public static void main(String[] args) {
 		SpringApplication.run(CalculMentalApplication.class, args);
-		
 	}
 	
 	@Override
 	public void run(String... args) throws Exception {
 
-		int MAX_NBR_TOUR = 1;
+		int MAX_NBR_TOUR = 2;
 
 		String replay = "";
 		int nbrTour = 0;
 		String operation = "";
 		int score = 0;
     	while(!replay.equals("N")) {
+
     		//Affichage de la fenetre de connexion
     		Utilisateur user = this.getUser();
     		
@@ -68,6 +68,13 @@ public class CalculMentalApplication implements CommandLineRunner{
     			nbrTour++;
 
 				if (nbrTour ==  MAX_NBR_TOUR) {
+
+					//get best score
+					Partie bestGame = daoPartie.findFirstByUtilisateurOrderByScoreDesc(user);
+					int bestScore = bestGame == null ? -1 : bestGame.getScore();
+					Strings.printScoreAndBestScore(score, bestScore);
+
+					//save game in db
 					Partie partie = new Partie();
 					partie.setScore(score);
 					partie.setUtilisateur(user);

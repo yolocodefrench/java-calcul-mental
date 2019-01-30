@@ -52,6 +52,23 @@ public class Strings {
 		printing += "         └─────────────────────────────────────────────────┘\n";
 		System.out.println(printing);
 	}
+
+	public static void printScoreAndBestScore(int score, int bestScore){
+		String s = bestScore == -1 ? "null" : String.valueOf(bestScore);
+
+		String printing = "";
+		printing += "         ┌─────────────────────────────────────────────────┐\n";
+		printing += "                                                          \n";
+		printing += "                                                          \n";
+		printing += "                        Score : " + score + "              \n";
+		printing += "                  Meilleur score : " + bestScore + "    	\n";
+		printing += "                                                          \n";
+		printing += "                                                          \n";
+		printing += "         └─────────────────────────────────────────────────┘\n";
+
+		System.out.println(printing);
+	}
+
 	public static void print10BestScores(List<Partie> partie) {
 
 		String printing = "";
@@ -61,7 +78,7 @@ public class Strings {
 		printing += "         │                                                 │\n";
 		for(int i=0; i<partie.size(); i++)  {
 			//Mettre getUtilisateur.getName a la place de getId
-			printing += "│   " + partie.get(i).getId() + " : " + partie.get(i).getScore() + "           |\n";
+			printing += "│   " + partie.get(i).getUtilisateur() + " : " + partie.get(i).getScore() + "           |\n";
 		}
 		printing += "         └─────────────────────────────────────────────────┘\n";
 		System.out.println(printing);
