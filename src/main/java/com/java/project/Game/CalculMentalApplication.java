@@ -82,8 +82,7 @@ public class CalculMentalApplication implements CommandLineRunner{
 			replay = this.getStringFromScanner("", replayArray);
 			//ne marche pas
 			if (replay.equals("N")){
-				List<Partie> listPartie = this.daoPartie.findAll();
-				Strings.print10BestScores(listPartie);
+				Strings.print10BestScores(daoPartie.findTop10ByOrderByScoreDesc());
 			}
     	}
 		
