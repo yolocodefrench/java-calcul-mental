@@ -2,8 +2,10 @@ package com.java.project.Game.job;
 
 import com.java.project.Game.domain.Partie;
 
+import java.util.List;
+
 public class Strings {
-	
+
 	public static void printConnection() {
 		String printing = "";
 		printing += "         ┌─────────────────────────────────────────────────┐\n";
@@ -50,18 +52,19 @@ public class Strings {
 		printing += "         └─────────────────────────────────────────────────┘\n";
 		System.out.println(printing);
 	}
-	public static void print10BestScores(Partie[] partie) {
-		
+	public static void print10BestScores(List<Partie> partie) {
+
 		String printing = "";
 		printing += "         ┌─────────────────────────────────────────────────┐\n";
 		printing += "         │                                                 │\n";
 		printing += "         │           Voici les 10 meilleurs scores         │\n";
 		printing += "         │                                                 │\n";
-		for(Partie p : partie) {
-			printing += "│   "+p.getUtilisateur() + " : " + p.getScore() + "           |\n";
+		for(int i=0; i<partie.size(); i++)  {
+			//Mettre getUtilisateur.getName a la place de getId
+			printing += "│   " + partie.get(i).getId() + " : " + partie.get(i).getScore() + "           |\n";
 		}
 		printing += "         └─────────────────────────────────────────────────┘\n";
-		System.out.println("");
+		System.out.println(printing);
 	}
 	public static void printReplay() {
 		String printing = "";

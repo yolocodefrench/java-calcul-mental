@@ -9,6 +9,7 @@ import com.java.project.Game.job.Strings;
 import com.java.project.Game.utils.ScannerUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -42,7 +43,7 @@ public class CalculMentalApplication implements CommandLineRunner{
     		//Affichage de la fenetre de connexion
     		Utilisateur user = this.getUser();
     		
-    		while(nbrTour < 10) {
+    		while(nbrTour < 1) {
     			Calcul calcul = new Calcul();
     			calcul.generateCalcul(5);
     			operation = calcul.getCalcul();
@@ -60,41 +61,50 @@ public class CalculMentalApplication implements CommandLineRunner{
     			else {
     				System.out.println("Mauvaise réponse");
     			}
-    			
-    			Partie partie = new Partie();
-    			partie.setScore(score);
-    			partie.setUtilisateur(user);
-    			daoPartie.save(partie);
+
     			nbrTour++;
+
+				if (nbrTour ==  10) {
+					Partie partie = new Partie();
+					partie.setScore(score);
+					partie.setUtilisateur(user);
+					daoPartie.save(partie);
+				}
     		}
     		
     		nbrTour = 0;
     		
     		//Affichage de la fenetre qui demande si le joueur veut rejouer
     		Strings.printReplay();
-    		
-    		String[] replayArray = {"N", "O"};
-    		replay = this.getStringFromScanner("", replayArray);
+			String replayAsk = null;
+			String[] replayArray = {"O", "N"};
+
+			replay = this.getStringFromScanner("", replayArray);
+			//ne marche pas
+			if (replay.equals("N")){
+				List<Partie> listPartie = this.daoPartie.findAll();
+				Strings.print10BestScores(listPartie);
+			}
     	}
 		
 	}
 	
 	private Utilisateur getUser() {
     	Strings.printConnection();
-    	
+
     	String name = "";
     	Utilisateur user = null;
-    	
+
     	List<Utilisateur> listUser = new ArrayList<Utilisateur>();
-    	
+
     	while(user == null) {
     		name = this.getStringFromScanner("Rentrez votre pseudo qui doit contenir moins de 20 caractères");
     		if(name.length() > 20) {
-    			name = ""; 
+    			name = "";
     		}
-    		
+
 	   		listUser = this.daoUtilisateur.findByName(name);
-	   		
+
 	   		if(listUser.size() > 0) {
 	   			String[] arrayConfirm = {"O", "N"};
 	   			Strings.printIdentityAsk();
@@ -110,7 +120,7 @@ public class CalculMentalApplication implements CommandLineRunner{
 	   			user = new Utilisateur(name);
 	   			this.daoUtilisateur.save(user);
 	   		}
-    		
+
     	}
 		return user;
     }

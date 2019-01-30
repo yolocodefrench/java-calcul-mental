@@ -16,7 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name="partie")
 public class Partie implements Serializable{
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
@@ -61,9 +61,7 @@ public class Partie implements Serializable{
 	}
 
 
-	public Utilisateur getUtilisateur() {
-		return utilisateur;
-	}
+	public Utilisateur getUtilisateur() { return utilisateur; }
 
 
 	public void setUtilisateur(Utilisateur utilisateur) {
