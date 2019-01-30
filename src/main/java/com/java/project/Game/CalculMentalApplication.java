@@ -35,6 +35,9 @@ public class CalculMentalApplication implements CommandLineRunner{
 	
 	@Override
 	public void run(String... args) throws Exception {
+
+		int MAX_NBR_TOUR = 1;
+
 		String replay = "";
 		int nbrTour = 0;
 		String operation = "";
@@ -43,11 +46,11 @@ public class CalculMentalApplication implements CommandLineRunner{
     		//Affichage de la fenetre de connexion
     		Utilisateur user = this.getUser();
     		
-    		while(nbrTour < 1) {
+    		while(nbrTour < MAX_NBR_TOUR) {
     			Calcul calcul = new Calcul();
     			calcul.generateCalcul(5);
     			operation = calcul.getCalcul();
-    			Strings.printCalcul(operation, (10-nbrTour));
+    			Strings.printCalcul(operation, (MAX_NBR_TOUR-nbrTour));
     			String[] arrayRes = {"", "!"};
     			String resultat = this.getStringFromScanner("", arrayRes);
     			
@@ -64,7 +67,7 @@ public class CalculMentalApplication implements CommandLineRunner{
 
     			nbrTour++;
 
-				if (nbrTour ==  10) {
+				if (nbrTour ==  MAX_NBR_TOUR) {
 					Partie partie = new Partie();
 					partie.setScore(score);
 					partie.setUtilisateur(user);
