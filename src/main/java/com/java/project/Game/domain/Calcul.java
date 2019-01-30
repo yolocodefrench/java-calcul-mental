@@ -3,8 +3,10 @@ package com.java.project.Game.domain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Calcul implements InterfaceCalcul{
+public class Calcul{
 
 	String[] calcul;
 	
@@ -50,7 +52,10 @@ public class Calcul implements InterfaceCalcul{
 	}
 	
 	public boolean isEqual(String response) {
-		return response.equals(this.calculate());
+		float f = Float.parseFloat(response);
+		String s = Float.toString(f);
+		//System.out.println(this.calculate());
+		return s.equals(this.calculate());
 	}
 	
 	private String calculate() {
@@ -87,9 +92,9 @@ public class Calcul implements InterfaceCalcul{
 			}
 		}
 		
-		System.out.println(Float.toString(finalResult));
+		String stringResult = Float.toString(finalResult);
 		
-		return Float.toString(finalResult);
+		return stringResult;
     }
 	
 	private float calcFromOperand(float first, String operand, float second) {
@@ -122,30 +127,5 @@ public class Calcul implements InterfaceCalcul{
 		}
 		
 		return indexes;
-	}
-
-	@Override
-	public int addition(int a, int b) {
-		return a+b;
-	}
-
-	@Override
-	public int substraction(int a, int b) {
-		return a-b;
-	}
-
-	@Override
-	public int multiplication(int a, int b) {
-		return a*b;
-	}
-
-	@Override
-	public int division(int a, int b) {
-		return a/b;
-	}
-
-	@Override
-	public int modulo(int a, int b) {
-		return a%b;
 	}
 }

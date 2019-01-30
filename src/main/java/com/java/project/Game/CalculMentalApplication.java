@@ -8,6 +8,8 @@ import com.java.project.Game.domain.Utilisateur;
 import com.java.project.Game.job.Strings;
 import com.java.project.Game.utils.ScannerUtil;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 public class CalculMentalApplication implements CommandLineRunner{
@@ -53,8 +53,8 @@ public class CalculMentalApplication implements CommandLineRunner{
     			Strings.printCalcul(operation, (MAX_NBR_TOUR-nbrTour));
     			String[] arrayRes = {"", "!"};
     			String resultat = this.getStringFromScanner("", arrayRes);
-    			
-    			resultat = resultat.replace(" ", "");
+				
+				resultat = resultat.replace(" ", "");
     			resultat = resultat.replaceAll(",", ".");
     			
     			if(calcul.isEqual(resultat)) {
@@ -84,16 +84,13 @@ public class CalculMentalApplication implements CommandLineRunner{
     		
     		nbrTour = 0;
     		
+    		Strings.print10BestScores(daoPartie.findTop10ByOrderByScoreDesc());
+    		
     		//Affichage de la fenetre qui demande si le joueur veut rejouer
     		Strings.printReplay();
-			String replayAsk = null;
 			String[] replayArray = {"O", "N"};
 
 			replay = this.getStringFromScanner("", replayArray);
-			//ne marche pas
-			if (replay.equals("N")){
-				Strings.print10BestScores(daoPartie.findTop10ByOrderByScoreDesc());
-			}
     	}
 		
 	}
@@ -134,7 +131,7 @@ public class CalculMentalApplication implements CommandLineRunner{
 		return user;
     }
     
-    private String getStringFromScanner(String sentence, String... param) {
+	private String getStringFromScanner(String sentence, String... param) {
     	if(!sentence.equals("")) {
     		System.out.println(sentence);
     	}
@@ -142,36 +139,33 @@ public class CalculMentalApplication implements CommandLineRunner{
     	Scanner sc = ScannerUtil.getInstance();
     	String str = sc.nextLine();
     	
+    	/*
+    	 * Si il y a des params spécifiés et param pas null
+    	*/
     	if(param.length > 0 && param!=null) {
+    		//Si le dernier n'est pas égal à !
     		if(!param[param.length-1].equals("!")) {
-    			int i=0;
     			for(String s: param) {
-            		if(s.equals(str) && i!=param.length-1) {
+            		if(s.equals(str)) {
             			return str;
-            		}
-            		i++;
+            		}	
             	}
         		System.out.println("Veuillez saisir une réponse correcte");
         		return this.getStringFromScanner(sentence, param);
         	}
         	else {
         		for(String s: param) {
-            		if(!s.equals(str) ) {
+        			int i=0;
+            		if(!s.equals(str)  && i!=param.length-1) {
             			return str;
             		}
+            		i++;
             	}
-        		System.out.println("Veuillez saisir une réponse correcte");
+        		System.out.println("Veuillez saisir une réponse correcte 1");
         		return this.getStringFromScanner(sentence, param);
         	}
     	}
     	return str;
-    }
-    
-    private int getIntFromScanner() {
-    	Scanner sc = ScannerUtil.getInstance();
-    	int num = sc.nextInt();
-    	sc.close();
-    	return num;
     }
 
 }
