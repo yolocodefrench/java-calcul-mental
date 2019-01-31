@@ -8,6 +8,8 @@ import com.java.project.Game.domain.Utilisateur;
 import com.java.project.Game.job.Strings;
 import com.java.project.Game.utils.ScannerUtil;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,11 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 public class CalculMentalApplication implements CommandLineRunner{
+	/*
+	 * Suite à un souci de configuration surement et un certain manque de compétence dans le domaine
+	 * Nous n'avons pas réussi à utiliser les services et l'autowiring correctement, ce qui fait que nous ne 
+	 * pouvions utiliser les requetes de nos répositories en dehors de cette classe
+	 * Nous avons donc mis tout le fonctionnement de base del'application dans cette classe 
+	*/
 	
 	@Autowired
 	IUtilisateurRepository daoUtilisateur;
@@ -46,15 +52,18 @@ public class CalculMentalApplication implements CommandLineRunner{
     		//Affichage de la fenetre de connexion
     		Utilisateur user = this.getUser();
     		
+    		
+    		//Boucle de jeu
     		while(nbrTour < MAX_NBR_TOUR) {
     			Calcul calcul = new Calcul();
     			calcul.generateCalcul(5);
+    			//Récupération du calcul qui a été généré
     			operation = calcul.getCalcul();
     			Strings.printCalcul(operation, (MAX_NBR_TOUR-nbrTour));
     			String[] arrayRes = {"", "!"};
     			String resultat = this.getStringFromScanner("", arrayRes);
-    			
-    			resultat = resultat.replace(" ", "");
+				
+				resultat = resultat.replace(" ", "");
     			resultat = resultat.replaceAll(",", ".");
 
     			//replace string response to float if it's possible
@@ -75,15 +84,16 @@ public class CalculMentalApplication implements CommandLineRunner{
 
 
     			nbrTour++;
-
+    			
+    			
 				if (nbrTour ==  MAX_NBR_TOUR) {
 
-					//get best score
+					//Récupération du meilleur score de l'utilisateur
 					Partie bestGame = daoPartie.findFirstByUtilisateurOrderByScoreDesc(user);
 					int bestScore = bestGame == null ? -1 : bestGame.getScore();
 					Strings.printScoreAndBestScore(score, bestScore);
 
-					//save game in db
+					//Enregistrement de la partie en base de données
 					Partie partie = new Partie();
 					partie.setScore(score);
 					partie.setUtilisateur(user);
@@ -93,20 +103,19 @@ public class CalculMentalApplication implements CommandLineRunner{
     		
     		nbrTour = 0;
     		
+    		//Récupération et affichage des 10 meilleurs scores
+    		Strings.print10BestScores(daoPartie.findTop10ByOrderByScoreDesc());
+    		
     		//Affichage de la fenetre qui demande si le joueur veut rejouer
     		Strings.printReplay();
-			String replayAsk = null;
 			String[] replayArray = {"O", "N"};
 
 			replay = this.getStringFromScanner("", replayArray);
-			//ne marche pas
-			if (replay.equals("N")){
-				Strings.print10BestScores(daoPartie.findTop10ByOrderByScoreDesc());
-			}
     	}
 		
 	}
 	
+	//Récupération des informations de l'utilisateur
 	private Utilisateur getUser() {
     	Strings.printConnection();
 
@@ -143,7 +152,10 @@ public class CalculMentalApplication implements CommandLineRunner{
 		return user;
     }
     
-    private String getStringFromScanner(String sentence, String... param) {
+	/*Cette méthode permet d'éviter les différents problèmes liés aux scanner, de cette manière, 
+	 * nous n'en avons qu'un seul pour tout le projet
+	*/
+	private String getStringFromScanner(String sentence, String... param) {
     	if(!sentence.equals("")) {
     		System.out.println(sentence);
     	}
@@ -151,36 +163,33 @@ public class CalculMentalApplication implements CommandLineRunner{
     	Scanner sc = ScannerUtil.getInstance();
     	String str = sc.nextLine();
     	
+    	/*
+    	 * Si il y a des params spécifiés et param pas null
+    	*/
     	if(param.length > 0 && param!=null) {
+    		//Si le dernier n'est pas égal à !
     		if(!param[param.length-1].equals("!")) {
-    			int i=0;
     			for(String s: param) {
-            		if(s.equals(str) && i!=param.length-1) {
+            		if(s.equals(str)) {
             			return str;
-            		}
-            		i++;
+            		}	
             	}
         		System.out.println("Veuillez saisir une réponse correcte");
         		return this.getStringFromScanner(sentence, param);
         	}
         	else {
         		for(String s: param) {
-            		if(!s.equals(str) ) {
+        			int i=0;
+            		if(!s.equals(str)  && i!=param.length-1) {
             			return str;
             		}
+            		i++;
             	}
-        		System.out.println("Veuillez saisir une réponse correcte");
+        		System.out.println("Veuillez saisir une réponse correcte 1");
         		return this.getStringFromScanner(sentence, param);
         	}
     	}
     	return str;
-    }
-    
-    private int getIntFromScanner() {
-    	Scanner sc = ScannerUtil.getInstance();
-    	int num = sc.nextInt();
-    	sc.close();
-    	return num;
     }
 
 }
