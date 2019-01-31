@@ -56,14 +56,23 @@ public class CalculMentalApplication implements CommandLineRunner{
     			
     			resultat = resultat.replace(" ", "");
     			resultat = resultat.replaceAll(",", ".");
+
+    			//replace string response to float if it's possible
+				try {
+
+					if(calcul.isEqual(resultat)) {
+						System.out.println("Bonne réponse");
+						score++;
+					}
+					else {
+						System.out.println("Mauvaise réponse");
+					}
+
+				}catch (Exception e){
+					System.out.println("This result is not a number !!");
+				}
     			
-    			if(calcul.isEqual(resultat)) {
-    				System.out.println("Bonne réponse");
-    				score++;
-    			}
-    			else {
-    				System.out.println("Mauvaise réponse");
-    			}
+
 
     			nbrTour++;
 

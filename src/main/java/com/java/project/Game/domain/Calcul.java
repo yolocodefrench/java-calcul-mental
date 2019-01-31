@@ -50,7 +50,9 @@ public class Calcul implements InterfaceCalcul{
 	}
 	
 	public boolean isEqual(String response) {
-		return response.equals(this.calculate());
+		Float responseNumber = Float.parseFloat(response);
+		Float result = Float.parseFloat(this.calculate());
+		return Float.compare(responseNumber, result) == 0;
 	}
 	
 	private String calculate() {
