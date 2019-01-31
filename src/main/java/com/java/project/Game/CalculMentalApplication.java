@@ -22,6 +22,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class CalculMentalApplication implements CommandLineRunner{
+	/*
+	 * Suite à un souci de configuration surement et un certain manque de compétence dans le domaine
+	 * Nous n'avons pas réussi à utiliser les services et l'autowiring correctement, ce qui fait que nous ne 
+	 * pouvions utiliser les requetes de nos répositories en dehors de cette classe
+	 * Nous avons donc mis tout le fonctionnement de base del'application dans cette classe 
+	*/
 	
 	@Autowired
 	IUtilisateurRepository daoUtilisateur;
@@ -46,9 +52,12 @@ public class CalculMentalApplication implements CommandLineRunner{
     		//Affichage de la fenetre de connexion
     		Utilisateur user = this.getUser();
     		
+    		
+    		//Boucle de jeu
     		while(nbrTour < MAX_NBR_TOUR) {
     			Calcul calcul = new Calcul();
     			calcul.generateCalcul(5);
+    			//Récupération du calcul qui a été généré
     			operation = calcul.getCalcul();
     			Strings.printCalcul(operation, (MAX_NBR_TOUR-nbrTour));
     			String[] arrayRes = {"", "!"};
@@ -66,15 +75,16 @@ public class CalculMentalApplication implements CommandLineRunner{
     			}
 
     			nbrTour++;
-
+    			
+    			
 				if (nbrTour ==  MAX_NBR_TOUR) {
 
-					//get best score
+					//Récupération du meilleur score de l'utilisateur
 					Partie bestGame = daoPartie.findFirstByUtilisateurOrderByScoreDesc(user);
 					int bestScore = bestGame == null ? -1 : bestGame.getScore();
 					Strings.printScoreAndBestScore(score, bestScore);
 
-					//save game in db
+					//Enregistrement de la partie en base de données
 					Partie partie = new Partie();
 					partie.setScore(score);
 					partie.setUtilisateur(user);
@@ -84,6 +94,7 @@ public class CalculMentalApplication implements CommandLineRunner{
     		
     		nbrTour = 0;
     		
+    		//Récupération et affichage des 10 meilleurs scores
     		Strings.print10BestScores(daoPartie.findTop10ByOrderByScoreDesc());
     		
     		//Affichage de la fenetre qui demande si le joueur veut rejouer
@@ -95,6 +106,7 @@ public class CalculMentalApplication implements CommandLineRunner{
 		
 	}
 	
+	//Récupération des informations de l'utilisateur
 	private Utilisateur getUser() {
     	Strings.printConnection();
 
@@ -131,6 +143,9 @@ public class CalculMentalApplication implements CommandLineRunner{
 		return user;
     }
     
+	/*Cette méthode permet d'éviter les différents problèmes liés aux scanner, de cette manière, 
+	 * nous n'en avons qu'un seul pour tout le projet
+	*/
 	private String getStringFromScanner(String sentence, String... param) {
     	if(!sentence.equals("")) {
     		System.out.println(sentence);
